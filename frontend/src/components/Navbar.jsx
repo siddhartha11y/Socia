@@ -232,15 +232,7 @@ export default function Navbar() {
 
         </div>
 
-        {/* Create Post */}
-        <motion.div whileHover={{ scale: 1.05 }}>
-          <Link
-            to="/create-post"
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 hover:shadow-[0_0_15px_#6C63FF] transition-all duration-300"
-          >
-            <PlusCircle size={20} /> Create
-          </Link>
-        </motion.div>
+        
           
            <NotificationsDropdown />
 
