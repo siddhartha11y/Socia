@@ -36,7 +36,7 @@ app.use(cookieParser());
 
 
 // Serve your frontend build files (React/Vue/Angular/etc) at root URL
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+// app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // Serve uploaded images statically at /images URL prefix
 // So that requests to /images/uploads/filename.jpg serve files from public/images/uploads/
@@ -244,14 +244,14 @@ io.on("connection", (socket) => {
 
 
 // Default route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+// });
 
 // 404 fallback
-app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, '../frontend/dist/404.html'));
-});
+// app.use((req, res) => {
+//   res.status(404).sendFile(path.join(__dirname, '../frontend/dist/404.html'));
+// });
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
