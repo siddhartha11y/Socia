@@ -26,8 +26,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS middleware (allow cookies from frontend)
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'http://localhost:5178',
+  'http://localhost:3000',
+  process.env.FRONTEND_URL, // Add your deployed frontend URL here
+  // Add any other domains you need
+];
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5178'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
@@ -67,7 +84,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true
   },

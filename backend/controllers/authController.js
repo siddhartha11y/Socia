@@ -1,6 +1,14 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
+// Helper function for cookie settings
+const getCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+});
 import Notification from "../models/notificationModel.js";
 
 // Register Controller
@@ -42,12 +50,7 @@ export async function authRegister(req, res) {
     const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true, // true only in prod
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    res.cookie("token", token, getCookieOptions());
 
     res.status(201).json({
       message: "User registered successfully",
@@ -94,12 +97,7 @@ export async function authLogin(req, res) {
       expiresIn: "7d",
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true, // true only in prod
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    res.cookie("token", token, getCookieOptions());
 
     res.status(200).json({
       message: "Login successful.",
