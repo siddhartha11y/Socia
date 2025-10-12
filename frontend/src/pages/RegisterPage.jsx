@@ -38,11 +38,13 @@ export default function Register() {
         password: form.password,
       });
 
-      // Get user profile after successful registration
-      const profileResponse = await api.get("/api/auth/profile");
-      
-      // Store user data in Zustand store
-      setUser(profileResponse.data);
+      // Store token in localStorage for incognito compatibility
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+      }
+
+      // Use user data from registration response
+      setUser(res.data.user);
 
       console.log("Registration successful:", profileResponse.data);
       toast.success("Account created successfully!");

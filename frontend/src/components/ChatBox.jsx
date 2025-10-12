@@ -4,7 +4,27 @@ import api from "../api/axios";
 import socketService from "../socket";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Phone, Video, MoreVertical, Smile, Paperclip, Mic, Home, Share2, Heart, MessageCircle, User, VolumeX, Volume2, Shield, Trash2, MessageSquare, PhoneCall, VideoIcon } from "lucide-react";
+import {
+  Send,
+  Phone,
+  Video,
+  MoreVertical,
+  Smile,
+  Paperclip,
+  Mic,
+  Home,
+  Share2,
+  Heart,
+  MessageCircle,
+  User,
+  VolumeX,
+  Volume2,
+  Shield,
+  Trash2,
+  MessageSquare,
+  PhoneCall,
+  VideoIcon,
+} from "lucide-react";
 import PostModal from "./PostModal";
 import agoraService from "../services/agoraService";
 
@@ -26,8 +46,8 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
   const navigate = useNavigate();
 
   // Get other user info for chat header
-  const otherUser = selectedChat?.participants?.find(p => p._id !== user._id);
-  const chatTitle = selectedChat?.isGroup 
+  const otherUser = selectedChat?.participants?.find((p) => p._id !== user._id);
+  const chatTitle = selectedChat?.isGroup
     ? selectedChat.name || "Group Chat"
     : otherUser?.fullName || otherUser?.username || "Unknown User";
 
@@ -51,20 +71,20 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
       if (socket) {
         socket.emit("initiate_call", {
           chatId: selectedChat._id,
-          callType: 'audio',
+          callType: "audio",
           caller: user,
-          recipient: otherUser
+          recipient: otherUser,
         });
 
         // Add call start message to chat
         try {
           const response = await api.post(`/api/messages/${selectedChat._id}`, {
             content: "📞 Audio call started",
-            messageType: 'call_history',
+            messageType: "call_history",
             callInfo: {
-              type: 'audio',
-              status: 'started'
-            }
+              type: "audio",
+              status: "started",
+            },
           });
 
           if (response.data) {
@@ -77,15 +97,19 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
           console.error("Error saving call start message:", error);
         }
       }
-      
+
       // THEN: Use Global Call Interface to start call properly
       if (window.globalCallInterface && window.globalCallInterface.startCall) {
-        await window.globalCallInterface.startCall(selectedChat._id, 'audio', otherUser);
+        await window.globalCallInterface.startCall(
+          selectedChat._id,
+          "audio",
+          otherUser
+        );
       } else {
         // Fallback: Use Agora service directly
-        await agoraService.startCall(selectedChat._id, 'audio');
+        await agoraService.startCall(selectedChat._id, "audio");
       }
-      
+
       // The GlobalCallInterface will handle the UI for the call
     } catch (error) {
       console.error("Error starting audio call:", error);
@@ -96,27 +120,25 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
   // Handle video call
   const handleVideoCall = async () => {
     try {
-
-      
       // FIRST: Send initiate_call event to backend to trigger incoming call notification
       const socket = socketService.getSocket();
       if (socket) {
         socket.emit("initiate_call", {
           chatId: selectedChat._id,
-          callType: 'video',
+          callType: "video",
           caller: user,
-          recipient: otherUser
+          recipient: otherUser,
         });
 
         // Add call start message to chat
         try {
           const response = await api.post(`/api/messages/${selectedChat._id}`, {
             content: "📹 Video call started",
-            messageType: 'call_history',
+            messageType: "call_history",
             callInfo: {
-              type: 'video',
-              status: 'started'
-            }
+              type: "video",
+              status: "started",
+            },
           });
 
           if (response.data) {
@@ -129,15 +151,19 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
           console.error("Error saving call start message:", error);
         }
       }
-      
+
       // THEN: Use Global Call Interface to start call properly
       if (window.globalCallInterface && window.globalCallInterface.startCall) {
-        await window.globalCallInterface.startCall(selectedChat._id, 'video', otherUser);
+        await window.globalCallInterface.startCall(
+          selectedChat._id,
+          "video",
+          otherUser
+        );
       } else {
         // Fallback: Use Agora service directly
-        await agoraService.startCall(selectedChat._id, 'video');
+        await agoraService.startCall(selectedChat._id, "video");
       }
-      
+
       // The GlobalCallInterface will handle the UI for the call
     } catch (error) {
       console.error("Error starting video call:", error);
@@ -157,7 +183,7 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
     setIsMuted(newMutedState);
     agoraService.toggleMute(newMutedState);
   };
-  
+
   // Toggle video
   const toggleVideo = () => {
     const newVideoState = !isVideoOn;
@@ -179,7 +205,9 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
 
   const handleBlockUser = () => {
     setShowThreeDotMenu(false);
-    toast.success(`${otherUser.fullName || otherUser.username} has been blocked`);
+    toast.success(
+      `${otherUser.fullName || otherUser.username} has been blocked`
+    );
     // TODO: Implement block functionality
   };
 
@@ -200,7 +228,7 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
       await api.delete(`/api/chats/${selectedChat._id}`);
       toast.success("Chat deleted");
       // Navigate back or refresh chat list
-      navigate('/messages');
+      navigate("/messages");
     } catch (error) {
       toast.error("Failed to delete chat");
     }
@@ -209,14 +237,17 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
   // Close three dot menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (threeDotMenuRef.current && !threeDotMenuRef.current.contains(event.target)) {
+      if (
+        threeDotMenuRef.current &&
+        !threeDotMenuRef.current.contains(event.target)
+      ) {
         setShowThreeDotMenu(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -224,11 +255,14 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
   useEffect(() => {
     if (selectedChat) {
       window.addMessageToCurrentChat = (message) => {
-        if (message.chat === selectedChat._id || message.chat._id === selectedChat._id) {
+        if (
+          message.chat === selectedChat._id ||
+          message.chat._id === selectedChat._id
+        ) {
           setMessages((prev) => [...prev, message]);
         }
       };
-      
+
       // Set flag to prevent global call interface from showing when in active chat
       if (agoraService.chatId === selectedChat._id) {
         window.isInActiveCallChat = true;
@@ -251,7 +285,10 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
       console.log("Selected chat:", selectedChat);
       console.log("Other user:", otherUser);
       console.log("Other user profile picture:", otherUser?.profilePicture);
-      console.log("Full profile picture URL:", `http://localhost:5000${otherUser?.profilePicture}`);
+      console.log(
+        "Full profile picture URL:",
+        `${import.meta.env.VITE_API_BASE_URL}${otherUser?.profilePicture}`
+      );
       console.log("==================");
     }
   }, [selectedChat, otherUser]);
@@ -270,7 +307,7 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
       try {
         const { data } = await api.get(`/api/messages/${selectedChat._id}`);
         setMessages(data);
-        
+
         // Join chat room for real-time updates
         const socket = socketService.getSocket();
         if (socket) {
@@ -299,7 +336,7 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
       if (msg.chat._id === selectedChat._id || msg.chat === selectedChat._id) {
         setMessages((prev) => {
           // Avoid duplicates
-          if (prev.some(m => m._id === msg._id)) {
+          if (prev.some((m) => m._id === msg._id)) {
             console.log("Duplicate message, ignoring");
             return prev;
           }
@@ -346,12 +383,12 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
     if (!socket) return;
 
     socket.emit("typing", selectedChat._id);
-    
+
     // Clear existing timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-    
+
     // Stop typing after 3 seconds of inactivity
     typingTimeoutRef.current = setTimeout(() => {
       socket.emit("stop_typing", selectedChat._id);
@@ -429,7 +466,6 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
       if (onMessageSent) {
         onMessageSent(data);
       }
-
     } catch (err) {
       console.error("Error sending message:", err);
       toast.error("Failed to send message");
@@ -445,29 +481,29 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
 
   // Format message time
   const formatTime = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return new Date(timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   if (!selectedChat) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="flex-1 flex flex-col items-center justify-center text-gray-400 bg-gray-900 min-h-full"
       >
         <div className="text-center">
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.1, 1],
-              rotate: [0, 5, -5, 0]
+              rotate: [0, 5, -5, 0],
             }}
-            transition={{ 
+            transition={{
               duration: 2,
               repeat: Infinity,
-              repeatType: "reverse"
+              repeatType: "reverse",
             }}
             className="mb-6 flex justify-center"
           >
@@ -475,8 +511,12 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
               <Send size={40} className="text-white" />
             </div>
           </motion.div>
-          <h3 className="text-xl font-semibold mb-2 text-center">Select a chat to start messaging</h3>
-          <p className="text-gray-500 text-center">Choose a conversation from the sidebar</p>
+          <h3 className="text-xl font-semibold mb-2 text-center">
+            Select a chat to start messaging
+          </h3>
+          <p className="text-gray-500 text-center">
+            Choose a conversation from the sidebar
+          </p>
         </div>
       </motion.div>
     );
@@ -485,7 +525,7 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
   return (
     <div className="flex flex-col h-full bg-gray-900">
       {/* Chat Header */}
-      <motion.div 
+      <motion.div
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="p-4 border-b border-gray-800 bg-gray-900"
@@ -496,21 +536,33 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
               whileHover={{ scale: 1.05 }}
               className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-purple-500"
             >
-              {otherUser?.profilePicture && otherUser.profilePicture !== "/images/default-avatar.png" ? (
+              {otherUser?.profilePicture &&
+              otherUser.profilePicture !== "/images/default-avatar.png" ? (
                 <img
-                  src={`http://localhost:5000${otherUser.profilePicture}`}
+                  src={`${import.meta.env.VITE_API_BASE_URL}${
+                    otherUser.profilePicture
+                  }`}
                   alt={chatTitle}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    console.log("Chat header image failed to load:", otherUser.profilePicture);
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
+                    console.log(
+                      "Chat header image failed to load:",
+                      otherUser.profilePicture
+                    );
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
                   }}
                 />
               ) : null}
-              <div 
+              <div
                 className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold"
-                style={{ display: otherUser?.profilePicture && otherUser.profilePicture !== "/images/default-avatar.png" ? 'none' : 'flex' }}
+                style={{
+                  display:
+                    otherUser?.profilePicture &&
+                    otherUser.profilePicture !== "/images/default-avatar.png"
+                      ? "none"
+                      : "flex",
+                }}
               >
                 {chatTitle.charAt(0).toUpperCase()}
               </div>
@@ -532,12 +584,20 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
                     />
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+                      transition={{
+                        duration: 0.6,
+                        repeat: Infinity,
+                        delay: 0.2,
+                      }}
                       className="w-2 h-2 bg-purple-400 rounded-full"
                     />
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                      transition={{
+                        duration: 0.6,
+                        repeat: Infinity,
+                        delay: 0.4,
+                      }}
                       className="w-2 h-2 bg-purple-400 rounded-full"
                     />
                     <span className="text-sm ml-2">typing...</span>
@@ -546,7 +606,7 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
               </AnimatePresence>
             </div>
           </div>
-          
+
           {/* Action Buttons */}
           <div className="flex items-center space-x-2">
             <motion.button
@@ -641,8 +701,6 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
         </div>
       </motion.div>
 
-
-
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-900 to-black scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
         {isLoading ? (
@@ -654,7 +712,7 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
             />
           </div>
         ) : messages.length === 0 ? (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center h-full text-gray-400"
@@ -675,7 +733,9 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
                   initial={{ opacity: 0, y: 20, scale: 0.8 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: index * 0.05 }}
-                  className={`flex ${isMyMessage ? "justify-end" : "justify-start"}`}
+                  className={`flex ${
+                    isMyMessage ? "justify-end" : "justify-start"
+                  }`}
                 >
                   <motion.div
                     whileHover={{ scale: 1.02 }}
@@ -686,14 +746,14 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
                     }`}
                   >
                     {/* Regular text message */}
-                    {(!msg.messageType || msg.messageType === 'text') && (
+                    {(!msg.messageType || msg.messageType === "text") && (
                       <p className="text-sm leading-relaxed">{msg.content}</p>
                     )}
-                    
+
                     {/* Call history message */}
-                    {msg.messageType === 'call_history' && (
+                    {msg.messageType === "call_history" && (
                       <div className="flex items-center gap-2 text-sm text-gray-300">
-                        {msg.callType === 'video' ? (
+                        {msg.callType === "video" ? (
                           <VideoIcon size={16} className="text-purple-400" />
                         ) : (
                           <PhoneCall size={16} className="text-purple-400" />
@@ -701,55 +761,72 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
                         <p className="italic">{msg.content}</p>
                       </div>
                     )}
-                    
+
                     {/* Shared post message */}
-                    {msg.messageType === 'shared_post' && msg.sharedPost && (
+                    {msg.messageType === "shared_post" && msg.sharedPost && (
                       <div className="space-y-3">
                         {/* Share message text */}
                         {msg.content && (
-                          <p className="text-sm leading-relaxed">{msg.content}</p>
+                          <p className="text-sm leading-relaxed">
+                            {msg.content}
+                          </p>
                         )}
-                        
+
                         {/* Shared post preview */}
-                        <motion.div 
+                        <motion.div
                           whileHover={{ scale: 1.02 }}
-                          onClick={() => handleSharedPostClick(msg.sharedPost._id)}
+                          onClick={() =>
+                            handleSharedPostClick(msg.sharedPost._id)
+                          }
                           className="bg-gray-700 rounded-lg overflow-hidden border border-gray-600 cursor-pointer"
                         >
                           {/* Post image */}
                           {msg.sharedPost.imageUrl && (
                             <div className="aspect-square overflow-hidden">
                               <img
-                                src={msg.sharedPost.imageUrl.startsWith('http') 
-                                  ? msg.sharedPost.imageUrl 
-                                  : `http://localhost:5000${msg.sharedPost.imageUrl}`}
+                                src={
+                                  msg.sharedPost.imageUrl.startsWith("http")
+                                    ? msg.sharedPost.imageUrl
+                                    : `${import.meta.env.VITE_API_BASE_URL}${
+                                        msg.sharedPost.imageUrl
+                                      }`
+                                }
                                 alt={msg.sharedPost.title}
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
-                                  console.log("Shared post image failed to load:", msg.sharedPost.imageUrl);
-                                  e.target.style.display = 'none';
+                                  console.log(
+                                    "Shared post image failed to load:",
+                                    msg.sharedPost.imageUrl
+                                  );
+                                  e.target.style.display = "none";
                                 }}
                               />
                             </div>
                           )}
-                          
+
                           {/* Post info */}
                           <div className="p-3 space-y-2">
-                            <h4 className="text-sm font-medium text-white" style={{
-                              display: '-webkit-box',
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden'
-                            }}>
+                            <h4
+                              className="text-sm font-medium text-white"
+                              style={{
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                              }}
+                            >
                               {msg.sharedPost.title}
                             </h4>
-                            
+
                             {/* Author info */}
                             <div className="flex items-center gap-2">
                               <img
-                                src={msg.sharedPost.author?.profilePicture 
-                                  ? `http://localhost:5000${msg.sharedPost.author.profilePicture}`
-                                  : '/default-avatar.png'
+                                src={
+                                  msg.sharedPost.author?.profilePicture
+                                    ? `${import.meta.env.VITE_API_BASE_URL}${
+                                        msg.sharedPost.author.profilePicture
+                                      }`
+                                    : "/default-avatar.png"
                                 }
                                 alt={msg.sharedPost.author?.username}
                                 className="w-6 h-6 rounded-full object-cover"
@@ -758,7 +835,7 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
                                 @{msg.sharedPost.author?.username}
                               </span>
                             </div>
-                            
+
                             {/* Post stats */}
                             <div className="flex items-center gap-4 text-xs text-gray-400">
                               <div className="flex items-center gap-1">
@@ -767,7 +844,9 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
                               </div>
                               <div className="flex items-center gap-1">
                                 <MessageCircle size={12} />
-                                <span>{msg.sharedPost.comments?.length || 0}</span>
+                                <span>
+                                  {msg.sharedPost.comments?.length || 0}
+                                </span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <Share2 size={12} />
@@ -778,10 +857,12 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
                         </motion.div>
                       </div>
                     )}
-                    
-                    <p className={`text-xs mt-2 ${
-                      isMyMessage ? "text-purple-100" : "text-gray-400"
-                    }`}>
+
+                    <p
+                      className={`text-xs mt-2 ${
+                        isMyMessage ? "text-purple-100" : "text-gray-400"
+                      }`}
+                    >
                       {formatTime(msg.createdAt)}
                     </p>
                   </motion.div>
@@ -809,7 +890,7 @@ export default function ChatBox({ selectedChat, user, onMessageSent }) {
           >
             <Paperclip size={20} />
           </motion.button>
-          
+
           <div className="flex-1 relative">
             <input
               type="text"

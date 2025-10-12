@@ -35,9 +35,12 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await api.post("/api/auth/logout", {}, { withCredentials: true });
+      localStorage.removeItem('token'); // Clear token from localStorage
       navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);
+      localStorage.removeItem('token'); // Clear token even if logout fails
+      navigate("/login");
     }
   };
 
@@ -174,7 +177,9 @@ export default function Navbar() {
                 }}
               >
                 <img
-                  src={u.profilePicture || "/avatar.png"}
+                  src={u.profilePicture && u.profilePicture !== "/images/default-avatar.svg" 
+                    ? (u.profilePicture.startsWith('http') ? u.profilePicture : `${import.meta.env.VITE_API_BASE_URL}${u.profilePicture}`)
+                    : "/avatar.png"}
                   alt={u.username}
                   className="w-8 h-8 rounded-full object-cover"
                 />
@@ -244,16 +249,25 @@ export default function Navbar() {
             to="/profile"
             className="flex items-center gap-2 text-gray-300 hover:text-purple-400 transition-all duration-300"
           >
-            {user?.profilePicture ? (
+            {user?.profilePicture && user.profilePicture !== "/images/default-avatar.svg" ? (
               <img
-                src={user.profilePicture}
+                src={user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}`}
                 alt={user.username}
                 className="w-8 h-8 rounded-full object-cover border border-gray-700  transition-transform duration-200 ease-in-out 
              hover:scale-110 hover:text-purple-400 
              hover:drop-shadow-[0_0_6px_#c084fc]"
+                onError={(e) => {
+                  console.log("Navbar profile image failed to load:", user.profilePicture);
+                  e.target.style.display = "none";
+                  e.target.nextSibling.style.display = "flex";
+                }}
               />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold">
+            ) : null}
+            {(!user?.profilePicture || user.profilePicture === "/images/default-avatar.svg") && (
+              <div 
+                className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold"
+                style={{ display: (!user?.profilePicture || user.profilePicture === "/images/default-avatar.svg") ? "flex" : "none" }}
+              >
                 {user?.username?.[0]?.toUpperCase() || "U"}
               </div>
             )}

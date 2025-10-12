@@ -29,16 +29,15 @@ export default function LoginPage() {
         { withCredentials: true }
       );
       
-      // Get user profile after successful login
-      const profileResponse = await api.get(
-        "/api/auth/profile",
-        { withCredentials: true }
-      );
+      // Store token in localStorage for incognito compatibility
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+      }
       
-      // Store user data in Zustand store
-      setUser(profileResponse.data);
+      // Use the user data from login response instead of making another API call
+      setUser(response.data.user);
       
-      console.log("Login successful:", profileResponse.data);
+      console.log("Login successful:", response.data.user);
       toast.success("Login successful!");
       navigate("/home");
     } catch (error) {
