@@ -82,9 +82,26 @@ export async function authLogin(req, res) {
         .json({ message: "Email and password are required." });
     }
 
-    const user = await User.findOne({ email });
-
+    console.log("🔍 Looking for user with email:", email);
+    
+    // Try case-insensitive search first
+    const user = await User.findOne({ 
+      email: { $regex: new RegExp(`^${email}$`, 'i') }
+    });
+    console.log("👤 Found user:", user ? "YES" : "NO");
+    
     if (!user) {
+      console.log("❌ User not found in database for email:", email);
+      // Let's also check if there are any users at all
+      const userCount = await User.countDocuments();
+      console.log("📊 Total users in database:", userCount);
+      
+      // Check for similar emails (debugging)
+      const similarUsers = await User.find({
+        email: { $regex: email.split('@')[0], $options: 'i' }
+      }).select('email username').limit(5);
+      console.log("🔍 Similar emails found:", similarUsers);
+      
       return res.status(404).json({ message: "User not found." });
     }
 

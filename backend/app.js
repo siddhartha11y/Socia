@@ -69,6 +69,28 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('Connected to MongoDB'))
 .catch((err) => console.error('MongoDB connection error:', err));
 
+// Database test endpoint
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const User = (await import('./models/userModel.js')).default;
+    const userCount = await User.countDocuments();
+    const sampleUsers = await User.find().limit(3).select('email username');
+    
+    res.json({
+      status: 'connected',
+      userCount,
+      sampleUsers,
+      mongoUri: process.env.MONGO_URI ? 'Set' : 'Not set'
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      error: error.message,
+      mongoUri: process.env.MONGO_URI ? 'Set' : 'Not set'
+    });
+  }
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
