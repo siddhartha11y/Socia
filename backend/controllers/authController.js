@@ -5,8 +5,8 @@ import jwt from "jsonwebtoken";
 // Helper function for cookie settings
 const getCookieOptions = () => ({
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: true, // Always secure for cross-origin
+  sameSite: "none", // Required for cross-origin cookies
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 });
 import Notification from "../models/notificationModel.js";
@@ -110,11 +110,22 @@ export async function authLogin(req, res) {
       return res.status(401).json({ message: "Invalid credentials." });
     }
 
+    console.log("🔑 JWT_SECRET exists:", !!process.env.JWT_SECRET);
+    console.log("🔑 JWT_SECRET length:", process.env.JWT_SECRET?.length);
+    
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
+    
+    console.log("🎫 Token generated:", !!token);
+    console.log("🎫 Token length:", token?.length);
 
-    res.cookie("token", token, getCookieOptions());
+    const cookieOptions = getCookieOptions();
+    console.log("🍪 Cookie options:", cookieOptions);
+    
+    res.cookie("token", token, cookieOptions);
+
+    console.log("✅ Login successful for user:", user.email);
 
     res.status(200).json({
       message: "Login successful.",
