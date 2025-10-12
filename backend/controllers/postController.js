@@ -2,6 +2,12 @@ import Post from "../models/postModel.js";
 import User from "../models/userModel.js";
 import Notification from "../models/notificationModel.js";
 
+// Helper function to get the correct protocol for URLs
+const getBaseUrl = (req) => {
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : req.protocol;
+  return `${protocol}://${req.get("host")}`;
+};
+
 
 export const createPost = async (req, res) => {
   try {
@@ -18,7 +24,7 @@ export const createPost = async (req, res) => {
 
     // Get full image URL
     const imagePath = `/images/uploads/${req.file.filename}`;
-    const fullImageUrl = `${req.protocol}://${req.get("host")}${imagePath}`;
+    const fullImageUrl = `${getBaseUrl(req)}${imagePath}`;
 
     // Fetch the author’s details once
     const author = await User.findById(authorId).select(
@@ -29,7 +35,7 @@ export const createPost = async (req, res) => {
     }
 
     const profilePictureUrl = author.profilePicture
-      ? `${req.protocol}://${req.get("host")}${author.profilePicture}`
+      ? `${getBaseUrl(req)}${author.profilePicture}`
       : null;
 
     // Create post with author reference AND embedded public details

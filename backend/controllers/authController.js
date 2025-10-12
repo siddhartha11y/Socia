@@ -2,6 +2,12 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+// Helper function to get the correct protocol for URLs
+const getBaseUrl = (req) => {
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : req.protocol;
+  return `${protocol}://${req.get("host")}`;
+};
+
 // Helper function for cookie settings
 const getCookieOptions = () => ({
   httpOnly: true,
@@ -59,7 +65,7 @@ export async function authRegister(req, res) {
         username: savedUser.username,
         email: savedUser.email,
         profilePicture: savedUser.profilePicture
-          ? `${req.protocol}://${req.get("host")}${savedUser.profilePicture}`
+          ? `${getBaseUrl(req)}${savedUser.profilePicture}`
           : null,
         bio: savedUser.bio,
       },
@@ -134,7 +140,7 @@ export async function authLogin(req, res) {
         username: user.username,
         email: user.email,
         profilePicture: user.profilePicture
-          ? `${req.protocol}://${req.get("host")}${user.profilePicture}`
+          ? `${getBaseUrl(req)}${user.profilePicture}`
           : null,
         bio: user.bio,
       },
