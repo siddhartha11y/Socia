@@ -76,10 +76,16 @@ app.get('/api/test-db', async (req, res) => {
     const userCount = await User.countDocuments();
     const sampleUsers = await User.find().limit(3).select('email username');
     
+    // Get database info
+    const dbName = mongoose.connection.db.databaseName;
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    
     res.json({
       status: 'connected',
+      currentDatabase: dbName,
       userCount,
       sampleUsers,
+      collections: collections.map(c => c.name),
       mongoUri: process.env.MONGO_URI ? 'Set' : 'Not set'
     });
   } catch (error) {
