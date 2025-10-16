@@ -1,4 +1,5 @@
 import Notification from "../models/notificationModel.js";
+import { getFileUrl, formatUserWithUrls } from "../utils/urlHelper.js";
 
 // Create a new notification
 export const createNotification = async (req, res) => {
@@ -27,21 +28,21 @@ export const createNotification = async (req, res) => {
 // Get all notifications for logged-in user
 export const getUserNotifications = async (req, res) => {
   try {
-   const notifications = await Notification.find({ recipient: req.user.id })
-  .populate("sender", "username profilePicture followers")
-  .populate("post", "content image")
-  .sort({ createdAt: -1 });
+    const notifications = await Notification.find({ recipient: req.user.id })
+      .populate("sender", "username profilePicture followers")
+      .populate("post", "content image")
+      .sort({ createdAt: -1 });
 
-const withFollowStatus = notifications.map((n) => ({
-  ...n._doc,
-  sender: {
-    ...n.sender._doc,
-    isFollowed: n.sender.followers.includes(req.user.id),
-  },
-}));
+    const withFollowStatus = notifications.map((n) => ({
+      ...n._doc,
+      sender: {
+        ...n.sender._doc,
+        profilePicture: getFileUrl(req, n.sender.profilePicture),
+        isFollowed: n.sender.followers.includes(req.user.id),
+      },
+    }));
 
-res.status(200).json(withFollowStatus);
-
+    res.status(200).json(withFollowStatus);
   } catch (error) {
     res.status(500).json({ message: "Error fetching notifications", error });
   }

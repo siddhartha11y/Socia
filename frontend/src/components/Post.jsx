@@ -7,6 +7,7 @@ import api from "../api/axios";
 import Comments from "./Comments";
 import SharePostModal from "./SharePostModal";
 import { toast } from "react-toastify";
+import { getImageUrl, getProfilePictureUrl, getPostImageUrl } from "../utils/imageUtils";
 
 export default function Post({ post, currentUser }) {
   // Debug logging
@@ -84,26 +85,16 @@ export default function Post({ post, currentUser }) {
       {/* Post Header */}
       <div className="flex items-center justify-between p-3 border-b border-gray-800">
         <div className="flex items-center gap-3 font-semibold text-purple-400">
-          {post.author?.profilePicture && post.author.profilePicture !== "/images/default-avatar.svg" ? (
-            <img
-              src={post.author.profilePicture.startsWith('http') ? post.author.profilePicture : `${import.meta.env.VITE_API_BASE_URL}${post.author.profilePicture}`}
-              alt={post.author.username}
-              className="w-10 h-10 rounded-full object-cover border border-gray-700"
-              onError={(e) => {
-                console.log("Post author profile image failed to load:", post.author.profilePicture);
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'flex';
-              }}
-            />
-          ) : null}
-          {(!post.author?.profilePicture || post.author.profilePicture === "/images/default-avatar.svg") && (
-            <div 
-              className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold"
-              style={{ display: (!post.author?.profilePicture || post.author.profilePicture === "/images/default-avatar.svg") ? "flex" : "none" }}
-            >
-              {post.author?.username?.[0]?.toUpperCase() || "U"}
-            </div>
-          )}
+          <img
+            src={getProfilePictureUrl(post.author?.profilePicture)}
+            alt={post.author?.username || "User"}
+            className="w-10 h-10 rounded-full object-cover border border-gray-700"
+            onError={(e) => {
+              console.log("Post author profile image failed to load:", post.author?.profilePicture);
+              e.target.src = "/default-avatar.png";
+            }}
+          />
+
           <Link
             to={`/profile/${post.author?.username}`}
             className="font-semibold text-purple-300 mr-1 
@@ -146,15 +137,12 @@ export default function Post({ post, currentUser }) {
       {/* Post Image */}
       {post.imageUrl && (
         <img
-          src={post.imageUrl.startsWith('http') ? post.imageUrl : `${import.meta.env.VITE_API_BASE_URL}${post.imageUrl}`}
+          src={getPostImageUrl(post.imageUrl)}
           alt="Post"
           className="w-full max-h-[400px] object-contain bg-gray-800"
           loading="lazy"
           onError={(e) => {
-            console.log("❌ Post image failed to load:");
-            console.log("Original imageUrl:", post.imageUrl);
-            console.log("Constructed URL:", post.imageUrl.startsWith('http') ? post.imageUrl : `${import.meta.env.VITE_API_BASE_URL}${post.imageUrl}`);
-            console.log("API Base URL:", import.meta.env.VITE_API_BASE_URL);
+            console.log("❌ Post image failed to load:", post.imageUrl);
             e.target.style.display = 'none';
           }}
           onLoad={() => {

@@ -4,8 +4,7 @@ import { Bell } from "lucide-react";
 import api from "../api/axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { getProfilePictureUrl } from "../utils/imageUtils";
 
 export default function NotificationsDropdown() {
   const [open, setOpen] = useState(false);
@@ -215,13 +214,13 @@ export default function NotificationsDropdown() {
                   >
                     {/* ✅ Sender profile picture */}
                     <img
-                      src={
-                        n.sender.profilePicture?.startsWith("http")
-                          ? n.sender.profilePicture
-                          : `${API_BASE_URL}${n.sender.profilePicture}`
-                      }
+                      src={getProfilePictureUrl(n.sender.profilePicture)}
                       alt={n.sender.username}
                       className="w-10 h-10 rounded-full object-cover"
+                      onError={(e) => {
+                        console.log("Notification profile image failed to load:", n.sender.profilePicture);
+                        e.target.src = "/default-avatar.png";
+                      }}
                     />
 
                     {/* ✅ Content wrapper */}

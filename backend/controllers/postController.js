@@ -1,12 +1,7 @@
 import Post from "../models/postModel.js";
 import User from "../models/userModel.js";
 import Notification from "../models/notificationModel.js";
-
-// Helper function to get the correct protocol for URLs
-const getBaseUrl = (req) => {
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : req.protocol;
-  return `${protocol}://${req.get("host")}`;
-};
+import { getBaseUrl, getFileUrl, formatUserWithUrls, formatPostWithUrls } from "../utils/urlHelper.js";
 
 
 export const createPost = async (req, res) => {
@@ -24,7 +19,7 @@ export const createPost = async (req, res) => {
 
     // Get full image URL
     const imagePath = `/images/uploads/${req.file.filename}`;
-    const fullImageUrl = `${getBaseUrl(req)}${imagePath}`;
+    const fullImageUrl = getFileUrl(req, imagePath);
 
     // Fetch the author’s details once
     const author = await User.findById(authorId).select(
@@ -34,9 +29,7 @@ export const createPost = async (req, res) => {
       return res.status(404).json({ message: "Author not found" });
     }
 
-    const profilePictureUrl = author.profilePicture
-      ? `${getBaseUrl(req)}${author.profilePicture}`
-      : null;
+    const profilePictureUrl = getFileUrl(req, author.profilePicture);
 
     // Create post with author reference AND embedded public details
     const post = new Post({
