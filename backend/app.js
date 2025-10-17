@@ -60,7 +60,7 @@ app.use(
   })
 );
 
-// Cookie parser
+// Cookie parser middleware
 app.use(cookieParser());
 
 // Serve your frontend build files (React/Vue/Angular/etc) at root URL
