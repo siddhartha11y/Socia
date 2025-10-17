@@ -4,10 +4,12 @@ import uploadProfile from '../config/multerProfile.js'; // your multer config fo
  
 const router = express.Router();
 import { authRegister, authLogin, authProfile, updateProfile, authLogout, followUser, unfollowUser, getUserByUsername, searchUsers, getFollowing, getFollowers } from "../controllers/authController.js";
+import { resetUserPassword } from "../controllers/resetPassword.js";
 
 
 router.post('/register', authRegister);
 router.post('/login', authLogin);
+router.post('/reset-password', resetUserPassword); // Temporary reset endpoint
 router.get("/profile", verifytoken, authProfile);
 // Update profile
 router.put("/update-profile", verifytoken, uploadProfile.single("profilePicture"), updateProfile);

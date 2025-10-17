@@ -62,13 +62,20 @@ app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // Serve uploaded images statically at /images URL prefix with CORS headers
-app.use("/images", (req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  next();
-}, express.static(path.join(process.cwd(), "public/images")));
+app.use(
+  "/images",
+  (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    next();
+  },
+  express.static(path.join(process.cwd(), "public/images"))
+);
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
