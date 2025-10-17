@@ -6,9 +6,10 @@
  * @returns {string} - Base URL with correct protocol
  */
 export const getBaseUrl = (req) => {
-  // Force HTTPS in production, use request protocol in development
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : req.protocol;
+  // Force HTTPS in production or when host is render.com
   const host = req.get('host');
+  const isProduction = process.env.NODE_ENV === 'production' || host.includes('render.com');
+  const protocol = isProduction ? 'https' : req.protocol;
   return `${protocol}://${host}`;
 };
 

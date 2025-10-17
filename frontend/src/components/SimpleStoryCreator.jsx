@@ -73,30 +73,30 @@ export default function SimpleStoryCreator({ user, onClose, onStoryCreated }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-gray-900 bg-opacity-95 z-50 flex items-center justify-center p-4"
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-hidden"
+        className="bg-gray-800 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-700 shadow-lg hover:shadow-[0_0_20px_#6C63FF] transition-all duration-300"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Create Story</h2>
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <h2 className="text-2xl font-bold text-white">Create Story</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-700 rounded-full transition-colors text-white"
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-4">
+        <div className="p-6 space-y-4">
           {/* Preview */}
           <div
-            className="w-full h-64 rounded-lg flex items-center justify-center relative overflow-hidden"
+            className="w-full h-64 rounded-lg flex items-center justify-center relative overflow-hidden border border-gray-700"
             style={{ backgroundColor }}
           >
             {previewUrl ? (
@@ -107,7 +107,7 @@ export default function SimpleStoryCreator({ user, onClose, onStoryCreated }) {
               />
             ) : (
               <div className="text-center">
-                <Camera size={48} className="mx-auto mb-2 text-gray-400" />
+                <Camera size={48} className="mx-auto mb-2 text-gray-500" />
                 <p className="text-gray-400">No image selected</p>
               </div>
             )}
@@ -126,7 +126,7 @@ export default function SimpleStoryCreator({ user, onClose, onStoryCreated }) {
 
           {/* Text Input */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
               <Type size={16} />
               Story Text
             </label>
@@ -134,18 +134,18 @@ export default function SimpleStoryCreator({ user, onClose, onStoryCreated }) {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="What's on your mind?"
-              className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition text-white placeholder-gray-400"
               rows={3}
               maxLength={200}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-400 mt-1">
               {content.length}/200 characters
             </p>
           </div>
 
           {/* File Input */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
               <Camera size={16} />
               Add Image
             </label>
@@ -153,14 +153,14 @@ export default function SimpleStoryCreator({ user, onClose, onStoryCreated }) {
               type="file"
               accept="image/*"
               onChange={handleFileSelect}
-              className="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-purple-600 hover:file:bg-purple-700 transition"
             />
           </div>
 
           {/* Color Pickers */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
                 <Palette size={16} />
                 Background
               </label>
@@ -168,9 +168,10 @@ export default function SimpleStoryCreator({ user, onClose, onStoryCreated }) {
                 {backgroundColors.map((color) => (
                   <button
                     key={color}
+                    type="button"
                     onClick={() => setBackgroundColor(color)}
-                    className={`w-8 h-8 rounded-full border-2 ${
-                      backgroundColor === color ? "border-blue-500" : "border-gray-300"
+                    className={`w-8 h-8 rounded-full border-2 transition-all ${
+                      backgroundColor === color ? "border-purple-500 scale-110" : "border-gray-600"
                     }`}
                     style={{ backgroundColor: color }}
                   />
@@ -179,20 +180,22 @@ export default function SimpleStoryCreator({ user, onClose, onStoryCreated }) {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">
+              <label className="text-sm font-medium text-gray-300 mb-2 block">
                 Text Color
               </label>
               <div className="flex gap-2">
                 <button
+                  type="button"
                   onClick={() => setTextColor("#ffffff")}
-                  className={`w-8 h-8 rounded-full border-2 bg-white ${
-                    textColor === "#ffffff" ? "border-blue-500" : "border-gray-300"
+                  className={`w-8 h-8 rounded-full border-2 bg-white transition-all ${
+                    textColor === "#ffffff" ? "border-purple-500 scale-110" : "border-gray-600"
                   }`}
                 />
                 <button
+                  type="button"
                   onClick={() => setTextColor("#000000")}
-                  className={`w-8 h-8 rounded-full border-2 bg-black ${
-                    textColor === "#000000" ? "border-blue-500" : "border-gray-300"
+                  className={`w-8 h-8 rounded-full border-2 bg-black transition-all ${
+                    textColor === "#000000" ? "border-purple-500 scale-110" : "border-gray-600"
                   }`}
                 />
               </div>
@@ -203,7 +206,7 @@ export default function SimpleStoryCreator({ user, onClose, onStoryCreated }) {
           <button
             onClick={handleSubmit}
             disabled={isLoading || (!content.trim() && !selectedFile)}
-            className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-[0_0_10px_#6C63FF] hover:shadow-[0_0_20px_#6C63FF]"
           >
             {isLoading ? "Creating..." : "Share Story"}
           </button>
