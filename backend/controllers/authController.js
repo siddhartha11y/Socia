@@ -159,13 +159,11 @@ export async function authProfile(req, res) {
       profilePicture: getFileUrl(req, user.profilePicture),
       posts: (user.posts || []).map((post) => ({
         ...post._doc,
-        imageUrl: getFileUrl(req, post.imageUrl)
-          : null,
+        imageUrl: getFileUrl(req, post.imageUrl),
         author: post.author
           ? {
               ...post.author._doc,
-              profilePicture: getFileUrl(req, post.author.profilePicture)
-                : null,
+              profilePicture: getFileUrl(req, post.author.profilePicture),
             }
           : null,
       })),
@@ -231,8 +229,7 @@ export async function getUserByUsername(req, res) {
       profilePicture: getFileUrl(req, user.profilePicture),
       posts: (user.posts || []).map((post) => ({
         ...post._doc,
-        imageUrl: getFileUrl(req, post.imageUrl)
-          : null,
+        imageUrl: getFileUrl(req, post.imageUrl),
       })),
     });
   } catch (err) {
@@ -346,8 +343,7 @@ export const getFollowing = async (req, res) => {
       _id: followedUser._id,
       username: followedUser.username,
       fullName: followedUser.fullName,
-      profilePicture: getFileUrl(req, followedUser.profilePicture)
-        : null
+      profilePicture: getFileUrl(req, followedUser.profilePicture),
     }));
 
     res.status(200).json(formattedFollowing);
@@ -375,8 +371,7 @@ export const getFollowers = async (req, res) => {
       _id: follower._id,
       username: follower.username,
       fullName: follower.fullName,
-      profilePicture: getFileUrl(req, follower.profilePicture)
-        : null
+      profilePicture: getFileUrl(req, follower.profilePicture),
     }));
 
     res.status(200).json(formattedFollowers);
