@@ -1,12 +1,16 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://socia-back.onrender.com',
   withCredentials: true, // if using cookies
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+// Debug environment variables
+console.log('🔧 API Base URL:', import.meta.env.VITE_API_BASE_URL);
+console.log('🔧 Environment:', import.meta.env.MODE);
 
 // Import auth utilities (avoiding circular dependency)
 let ensureValidToken;
