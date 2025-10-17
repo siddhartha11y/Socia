@@ -32,6 +32,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://socia-back.onrender.com", // Your deployed backend
   process.env.FRONTEND_URL, // Add your deployed frontend URL here
+  // Add your Vercel URL here once you get it (e.g., "https://socia-abc123.vercel.app")
   // Add any other domains you need
 ];
 
@@ -60,9 +61,14 @@ app.use(cookieParser());
 // Serve your frontend build files (React/Vue/Angular/etc) at root URL
 // app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-// Serve uploaded images statically at /images URL prefix
-// So that requests to /images/uploads/filename.jpg serve files from public/images/uploads/
-app.use("/images", express.static(path.join(process.cwd(), "public/images")));
+// Serve uploaded images statically at /images URL prefix with CORS headers
+app.use("/images", (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  next();
+}, express.static(path.join(process.cwd(), "public/images")));
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
