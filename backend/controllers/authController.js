@@ -156,24 +156,15 @@ export async function authProfile(req, res) {
 
     res.json({
       ...user._doc,
-      profilePicture: user.profilePicture
-        ? `${req.protocol}://${req.get("host")}${user.profilePicture}`
-        : null,
+      profilePicture: getFileUrl(req, user.profilePicture),
       posts: (user.posts || []).map((post) => ({
         ...post._doc,
-        imageUrl: post.imageUrl
-          ? `${req.protocol}://${req.get("host")}${post.imageUrl.replace(
-              /^https?:\/\/[^/]+/,
-              ""
-            )}`
+        imageUrl: getFileUrl(req, post.imageUrl)
           : null,
         author: post.author
           ? {
               ...post.author._doc,
-              profilePicture: post.author.profilePicture
-                ? `${req.protocol}://${req.get("host")}${
-                    post.author.profilePicture
-                  }`
+              profilePicture: getFileUrl(req, post.author.profilePicture)
                 : null,
             }
           : null,
@@ -237,16 +228,10 @@ export async function getUserByUsername(req, res) {
 
     res.json({
       ...user._doc,
-      profilePicture: user.profilePicture
-        ? `${req.protocol}://${req.get("host")}${user.profilePicture}`
-        : null,
+      profilePicture: getFileUrl(req, user.profilePicture),
       posts: (user.posts || []).map((post) => ({
         ...post._doc,
-        imageUrl: post.imageUrl
-          ? `${req.protocol}://${req.get("host")}${post.imageUrl.replace(
-              /^https?:\/\/[^/]+/,
-              ""
-            )}`
+        imageUrl: getFileUrl(req, post.imageUrl)
           : null,
       })),
     });
@@ -275,9 +260,7 @@ export async function searchUsers(req, res) {
       _id: user._id,
       username: user.username,
       fullName: user.fullName,
-      profilePicture: user.profilePicture
-        ? `${req.protocol}://${req.get("host")}${user.profilePicture}`
-        : null,
+      profilePicture: getFileUrl(req, user.profilePicture),
       isFollowing: user.followers.includes(req.user?.id), // true/false
     }));
 
@@ -363,8 +346,7 @@ export const getFollowing = async (req, res) => {
       _id: followedUser._id,
       username: followedUser.username,
       fullName: followedUser.fullName,
-      profilePicture: followedUser.profilePicture
-        ? `${req.protocol}://${req.get("host")}${followedUser.profilePicture}`
+      profilePicture: getFileUrl(req, followedUser.profilePicture)
         : null
     }));
 
@@ -393,8 +375,7 @@ export const getFollowers = async (req, res) => {
       _id: follower._id,
       username: follower.username,
       fullName: follower.fullName,
-      profilePicture: follower.profilePicture
-        ? `${req.protocol}://${req.get("host")}${follower.profilePicture}`
+      profilePicture: getFileUrl(req, follower.profilePicture)
         : null
     }));
 

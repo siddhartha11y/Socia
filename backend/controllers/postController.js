@@ -69,19 +69,10 @@ export const getAllPosts = async (req, res) => {
 
       return {
         ...postObj,
-        imageUrl: post.imageUrl
-          ? `${req.protocol}://${req.get("host")}${post.imageUrl.replace(
-              /^https?:\/\/[^/]+/,
-              ""
-            )}`
-          : null,
+        imageUrl: getFileUrl(req, post.imageUrl),
         author: {
           ...post.author.toObject(),
-          profilePicture: post.author?.profilePicture
-            ? `${req.protocol}://${req.get("host")}${
-                post.author.profilePicture
-              }`
-            : null,
+          profilePicture: getFileUrl(req, post.author?.profilePicture),
         },
         likes: post.likes.length, // return number of likes (not just array)
         likedByUser: req.user
@@ -156,7 +147,7 @@ export const addComment = async (req, res) => {
       author: {
         ...comment.author.toObject(),
         profilePicture: comment.author?.profilePicture
-          ? `${req.protocol}://${req.get("host")}${comment.author.profilePicture}`
+          ? `getFileUrl(req, comment.author?.profilePicture)`
           : null,
       }
     }));
@@ -192,7 +183,7 @@ export const getComments = async (req, res) => {
       author: {
         ...comment.author.toObject(),
         profilePicture: comment.author?.profilePicture
-          ? `${req.protocol}://${req.get("host")}${comment.author.profilePicture}`
+          ? `getFileUrl(req, comment.author?.profilePicture)`
           : null,
       }
     }));
@@ -230,7 +221,7 @@ export const editComment = async (req, res) => {
       author: {
         ...comment.author.toObject(),
         profilePicture: comment.author?.profilePicture
-          ? `${req.protocol}://${req.get("host")}${comment.author.profilePicture}`
+          ? `getFileUrl(req, comment.author?.profilePicture)`
           : null,
       }
     }));
@@ -269,7 +260,7 @@ export const deleteComment = async (req, res) => {
       author: {
         ...comment.author.toObject(),
         profilePicture: comment.author?.profilePicture
-          ? `${req.protocol}://${req.get("host")}${comment.author.profilePicture}`
+          ? `getFileUrl(req, comment.author?.profilePicture)`
           : null,
       }
     }));
@@ -342,7 +333,7 @@ export async function updatePost(req, res) {
     }
 
     // Normalize URLs like you do elsewhere
-    const host = `${req.protocol}://${req.get("host")}`;
+    const host = getBaseUrl(req);
     const normalize = (p) =>
       p ? `${host}${String(p).replace(/^https?:\/\/[^/]+/, "")}` : null;
 
@@ -506,13 +497,11 @@ export const getTrendingPosts = async (req, res) => {
     // Format the response with full URLs
     const formattedPosts = posts.map(post => ({
       ...post,
-      imageUrl: post.imageUrl
-        ? `${req.protocol}://${req.get("host")}${post.imageUrl.replace(/^https?:\/\/[^/]+/, "")}`
+      imageUrl: getFileUrl(req, post.imageUrl)
         : null,
       author: {
         ...post.author,
-        profilePicture: post.author?.profilePicture
-          ? `${req.protocol}://${req.get("host")}${post.author.profilePicture}`
+        profilePicture: getFileUrl(req, post.author?.profilePicture)
           : null,
       },
       likes: post.likes.length,
