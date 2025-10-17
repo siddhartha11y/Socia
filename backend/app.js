@@ -31,8 +31,8 @@ const allowedOrigins = [
   "http://localhost:5178",
   "http://localhost:3000",
   "https://socia-back.onrender.com", // Your deployed backend
+  "https://socia-zeta.vercel.app", // Your Vercel frontend URL
   process.env.FRONTEND_URL, // Add your deployed frontend URL here
-  // Add your Vercel URL here once you get it (e.g., "https://socia-abc123.vercel.app")
   // Add any other domains you need
 ];
 
