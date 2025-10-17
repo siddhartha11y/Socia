@@ -13,6 +13,7 @@ import {
   Volume2,
 } from "lucide-react";
 import api from "../api/axios";
+import { formatInstagramTime, formatTime } from "../utils/timeUtils";
 
 export default function StoryViewer({
   stories,
@@ -189,14 +190,21 @@ export default function StoryViewer({
         <div className="flex items-center space-x-3">
           <img
             src={
-              currentStory.author?.profilePicture
+              currentStory.author?.profilePicture && 
+              currentStory.author.profilePicture !== "/images/default-avatar.png" &&
+              currentStory.author.profilePicture !== "/images/default-avatar.svg"
                 ? `${import.meta.env.VITE_API_BASE_URL}${currentStory.author.profilePicture}`
-                : user?.profilePicture
+                : user?.profilePicture && 
+                  user.profilePicture !== "/images/default-avatar.png" &&
+                  user.profilePicture !== "/images/default-avatar.svg"
                 ? `${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}`
-                : "/default-avatar.png"
+                : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%236B7280'/%3E%3Ccircle cx='20' cy='15' r='6' fill='%239CA3AF'/%3E%3Cpath d='M8 32 C8 26, 13 22, 20 22 C27 22, 32 26, 32 32' fill='%239CA3AF'/%3E%3C/svg%3E"
             }
             alt={currentStory.author?.username || user?.username}
             className="w-10 h-10 rounded-full object-cover border-2 border-white"
+            onError={(e) => {
+              e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%236B7280'/%3E%3Ccircle cx='20' cy='15' r='6' fill='%239CA3AF'/%3E%3Cpath d='M8 32 C8 26, 13 22, 20 22 C27 22, 32 26, 32 32' fill='%239CA3AF'/%3E%3C/svg%3E";
+            }}
           />
           <div>
             <p className="text-white font-semibold">
@@ -294,6 +302,10 @@ export default function StoryViewer({
               src={`${import.meta.env.VITE_API_BASE_URL}${currentStory.media}`}
               alt="Story"
               className="w-full h-full object-cover rounded-lg"
+              onError={(e) => {
+                console.error("Failed to load story image:", e.target.src);
+                e.target.style.display = 'none';
+              }}
             />
           )
         ) : (

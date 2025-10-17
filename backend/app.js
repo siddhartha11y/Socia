@@ -30,6 +30,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5178",
   "http://localhost:3000",
+  "https://socia-back.onrender.com", // Your deployed backend
   process.env.FRONTEND_URL, // Add your deployed frontend URL here
   // Add any other domains you need
 ];

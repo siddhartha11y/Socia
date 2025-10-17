@@ -99,6 +99,11 @@ export const formatCommentTime = (timestamp) => {
   return commentTime.toLocaleDateString('en-US', options);
 };
 
+// General time formatting function
+export const formatTime = (timestamp) => {
+  return formatInstagramTime(timestamp);
+};
+
 
 
 
