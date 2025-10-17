@@ -45,12 +45,12 @@ const upload = multer({
 // Create a new story
 const createStory = async (req, res) => {
   try {
-    const { content, backgroundColor, textColor, music, gif, duration } = req.body;
+    const { content, backgroundColor, textColor } = req.body;
     const userId = req.user.id;
 
-    // Validate input - story must have content, media, or GIF
-    if (!content && !req.file && !gif) {
-      return res.status(400).json({ message: "Story must have content, media, or GIF" });
+    // Validate input - story must have content or media
+    if (!content && !req.file) {
+      return res.status(400).json({ message: "Story must have content or media" });
     }
 
     const storyData = {
@@ -58,31 +58,13 @@ const createStory = async (req, res) => {
       content: content || "",
       backgroundColor: backgroundColor || "#000000",
       textColor: textColor || "#ffffff",
-      duration: duration ? parseInt(duration) : 5000, // Default 5 seconds
+      duration: 5000, // Fixed 5 seconds
     };
 
     // Add media if uploaded
     if (req.file) {
       storyData.media = `/images/stories/${req.file.filename}`;
       storyData.mediaType = req.file.mimetype.startsWith("video") ? "video" : "image";
-    }
-
-    // Add GIF if provided
-    if (gif) {
-      try {
-        storyData.gif = JSON.parse(gif);
-      } catch (error) {
-        console.error("Error parsing GIF data:", error);
-      }
-    }
-
-    // Add music if provided
-    if (music) {
-      try {
-        storyData.music = JSON.parse(music);
-      } catch (error) {
-        console.error("Error parsing music data:", error);
-      }
     }
 
     const story = new Story(storyData);

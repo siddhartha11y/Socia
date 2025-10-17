@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Feed from "../components/Feed";
-import StoriesCarousel from "../components/StoriesCarousel";
+import SimpleStoriesCarousel from "../components/SimpleStoriesCarousel";
 import api from "../api/axios";
 
 export default function HomePage() {
@@ -40,7 +40,7 @@ export default function HomePage() {
         <div className="ml-[256px] pt-[64px] flex-grow">
           <div className="max-w-2xl mx-auto">
             {/* Stories Carousel */}
-            {currentUser && <StoriesCarousel user={currentUser} />}
+            {currentUser && <SimpleStoriesCarousel user={currentUser} />}
             
             {/* Feed */}
             <Feed />

@@ -46,7 +46,7 @@ export default function Register() {
       // Use user data from registration response
       setUser(res.data.user);
 
-      console.log("Registration successful:", profileResponse.data);
+      console.log("Registration successful:", res.data);
       toast.success("Account created successfully!");
       navigate('/home');
     } catch (err) {
