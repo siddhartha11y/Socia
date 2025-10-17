@@ -42,6 +42,11 @@ app.use(
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
 
+      // Allow all Vercel preview deployments
+      if (origin && origin.includes('vercel.app')) {
+        return callback(null, true);
+      }
+
       if (
         allowedOrigins.indexOf(origin) !== -1 ||
         process.env.NODE_ENV === "development"
@@ -126,7 +131,14 @@ const server = http.createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow all Vercel deployments
+      if (!origin || origin.includes('vercel.app') || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ["GET", "POST"],
     credentials: true,
   },
