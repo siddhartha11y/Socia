@@ -9,7 +9,13 @@ export const getBaseUrl = (req) => {
   // Force HTTPS in production or when host is render.com
   const host = req.get('host');
   const isProduction = process.env.NODE_ENV === 'production' || host.includes('render.com');
-  const protocol = isProduction ? 'https' : req.protocol;
+  
+  // Ensure protocol has proper format
+  let protocol = isProduction ? 'https' : (req.protocol || 'http');
+  
+  // Remove any trailing colons or slashes from protocol
+  protocol = protocol.replace(/[:\/]+$/, '');
+  
   return `${protocol}://${host}`;
 };
 
@@ -66,4 +72,29 @@ export const formatPostWithUrls = (req, post) => {
     imageUrl: getFileUrl(req, postObj.imageUrl),
     author: postObj.author ? formatUserWithUrls(req, postObj.author) : null
   };
+};
+
+/**
+ * Get profile picture URL with proper formatting
+ * @param {Object} req - Express request object
+ * @param {string} profilePicture - Profile picture path
+ * @returns {string|null} - Full URL or null
+ */
+export const getProfilePictureUrl = (req, profilePicture) => {
+  if (!profilePicture) return null;
+  
+  // If already a full URL, ensure proper format
+  if (profilePicture.startsWith('http')) {
+    // Ensure it has proper protocol format
+    if (!profilePicture.includes('://')) {
+      profilePicture = profilePicture.replace(/^https?/, '$&://');
+    }
+    // Force HTTPS in production
+    return process.env.NODE_ENV === 'production' || profilePicture.includes('render.com')
+      ? profilePicture.replace(/^http:/, 'https:')
+      : profilePicture;
+  }
+  
+  // Construct full URL
+  return getFileUrl(req, profilePicture);
 };

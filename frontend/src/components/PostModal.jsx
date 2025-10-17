@@ -15,8 +15,8 @@ export default function PostModal({ postId, isOpen, onClose, currentUser }) {
       const fetchPost = async () => {
         setLoading(true);
         try {
-          const response = await api.get(`/api/posts/${postId}`, { 
-            withCredentials: true 
+          const response = await api.get(`/api/posts/${postId}`, {
+            withCredentials: true,
           });
           setPost(response.data);
         } catch (error) {
@@ -35,17 +35,17 @@ export default function PostModal({ postId, isOpen, onClose, currentUser }) {
   // Close modal on escape key
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
       return () => {
-        document.removeEventListener('keydown', handleEscape);
-        document.body.style.overflow = 'unset';
+        document.removeEventListener("keydown", handleEscape);
+        document.body.style.overflow = "unset";
       };
     }
   }, [isOpen, onClose]);
@@ -63,7 +63,7 @@ export default function PostModal({ postId, isOpen, onClose, currentUser }) {
     >
       {/* Blurred Background */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-md" />
-      
+
       {/* Modal Content */}
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -97,11 +97,11 @@ export default function PostModal({ postId, isOpen, onClose, currentUser }) {
         </div>
 
         {/* Content */}
-        <div 
+        <div
           className="bg-black rounded-b-2xl overflow-y-auto max-h-[calc(90vh-80px)] post-modal-content"
           style={{
-            scrollbarWidth: 'none', /* Firefox */
-            msOverflowStyle: 'none', /* Internet Explorer 10+ */
+            scrollbarWidth: "none" /* Firefox */,
+            msOverflowStyle: "none" /* Internet Explorer 10+ */,
           }}
         >
           <style>{`
@@ -124,7 +124,9 @@ export default function PostModal({ postId, isOpen, onClose, currentUser }) {
           ) : (
             <div className="flex flex-col items-center justify-center h-64 text-gray-400">
               <h3 className="text-lg font-semibold mb-2">Post not found</h3>
-              <p className="text-gray-500 mb-4">The post you're looking for doesn't exist or has been removed.</p>
+              <p className="text-gray-500 mb-4">
+                The post you're looking for doesn't exist or has been removed.
+              </p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
